@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Filter from './components/filter'
 import Persons from './components/person'
 import PersonForm from './components/person_form'
@@ -6,17 +7,21 @@ import PersonForm from './components/person_form'
 
 const App = () => {
   // States
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
   const [personsFiltered, filterPersons] = useState(persons)
   const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const checkname = persons => persons.name === newName;
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+        filterPersons(response.data)
+      })
+  }, [])
 
   // addName Form
   const addToPhoneBook = (event) => {
@@ -82,3 +87,4 @@ export default App
 // 2.8 complete 7/18
 // 2.9 complete 7/19
 // 2.10 complete 7/19 but requires minor cleanup
+// 2.11 complete 7/28
