@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import Filter from './components/filter'
-import Persons from './components/person'
-import PersonForm from './components/person_form'
+import Filter from './components/Filter'
+import Persons from './components/Person'
+import PersonForm from './components/Person_Form'
+import Notification from './components/Notification'
 import nameService from './services/persons'
 
 const App = () => {
@@ -11,6 +12,8 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [Message, setMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState(null)
   const checkname = persons => persons.name === newName;
 
   const PromptUser = (nameObject) => {
@@ -23,20 +26,41 @@ const App = () => {
 
       nameService
         .update(matching_record_id, nameObject)
+        .then(response => {
+          setMessage(
+            `Added '${newName}'`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+          setNotificationType(
+            'success'
+          )
+        })
+        .catch(response => {
+          setMessage(
+            `Information of '${newName}' has already been removed from server`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+          setNotificationType(
+            'failure'
+          )
+        })
 
       nameService
         .getAll()
         .then(response => {
           setPersons(response.data)
           filterPersons(response.data.filter(x => x.name.toLowerCase().includes(newFilter.toLowerCase())))
-
           setNewName('')
           setNewNumber('')
-        }
-        )
+        })
+
+
     }
   }
-
 
 
   useEffect(() => {
@@ -72,6 +96,16 @@ const App = () => {
           filterPersons(persons.concat(response.data).filter(x => x.name.toLowerCase().includes(newFilter.toLowerCase())))
           setNewName('')
           setNewNumber('')
+
+          setMessage(
+            `Added '${newName}'`
+          )
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+          setNotificationType(
+            'success'
+          )
         })
     }
   }
@@ -100,6 +134,17 @@ const App = () => {
     { alert(`Delete ${event.name} ?`) }
     nameService
       .deleteRecord(event.id)
+      .catch(response => {
+        setMessage(
+          `Information of '${newName}' has already been removed from server`
+        )
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+        setNotificationType(
+          'failure'
+        )
+      })
 
     nameService
       .getAll()
@@ -114,6 +159,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={Message} notificationType={notificationType} />
       <Filter filter={newFilter} handleFilterChange={handleFilterChange} />
 
       <h2>add a new</h2>
@@ -137,3 +183,5 @@ export default App
 // 2.13 complete 7/28
 // 2.14 complete 7/29
 // 2.15 complete 7/29
+// 2.16 complete 9/6
+// 2.17 complete 9/6
