@@ -6,3 +6,4 @@ This document contains steps done in refactoring.
 * Moved api controllers to controllers/blogs.js
 * Split index.js into app.js for application logic and index.js for server entry point. 
 * need to handle middleware 
+
