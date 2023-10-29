@@ -23,12 +23,12 @@ app.listen(config.PORT, () => {
 // exercise 4.12 complete 10/23
 // exercise 4.13 complete 10/29
 // exercise 4.14 complete 10/29
-// exercise 4.15
-// exercise 4.16
-// exercise 4.17
-// exercise 4.18
-// exercise 4.19
-// exercise 4.20
-// exercise 4.21
-// exercise 4.22
-// exercise 4.23
+// exercise 4.15 complete 10/29
+// exercise 4.16 complete 10/29
+// exercise 4.17 complete 10/29
+// exercise 4.18 complete 10/29
+// exercise 4.19 complete 10/29
+// exercise 4.20 complete 10/29
+// exercise 4.21 complete 10/29
+// exercise 4.22 complete 10/29
+// exercise 4.23 complete 10/29
