@@ -1,11 +1,13 @@
 const listHelper = require('../utils/list_helper')
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
+const Blog = require('../models/blog')
+
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const ObjectId = require('mongodb').ObjectId
 
-const Blog = require('../models/blog')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -19,12 +21,13 @@ beforeEach(async () => {
 
 describe('general checks on blogs', () => {
   test('correct number of blogs returned', async () => {
-    const response = await api.get('/api/blogs')
+
+    const response = await api.get('/api/blogs').set('Authorization', helper.authHeader)
     expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
   test('unique identifier id exists for blog', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs').set('Authorization', helper.authHeader)
 
     response.body.forEach(blog => {
       expect(blog.id).toBeDefined()})
@@ -35,12 +38,14 @@ describe('general checks on blogs', () => {
       'title': 'Harrys Blog',
       'author': 'Harry',
       'url': 'www.harry.com',
-      'likes': 0
+      'likes': 0,
+      'userId': new ObjectId('653e84c59aa09b45955f6625')
     }
 
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', helper.authHeader)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -48,6 +53,21 @@ describe('general checks on blogs', () => {
 
     // list + 1
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+  })
+
+  test('blog without auth returns 401', async () => {
+    const newBlog = {
+      'title': 'Harrys Blog',
+      'author': 'Harry',
+      'url': 'www.harry.com',
+      'likes': 0,
+      'userId': '653e6f4774198d14ca396f07'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
   })
 
   test('likes property does not exist default 0', async () => {
@@ -67,17 +87,24 @@ describe('general checks on blogs', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', helper.authHeader)
       .expect(400)
   }, 100000)
 })
 
-describe('deletion of a note', () => {
+describe('deletion of a blog', () => {
   test('succeeds with status code 204 if id is valid', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
+    console.log(blogsAtStart)
+    console.log(blogToDelete)
+    console.log(blogToDelete.id)
+    console.log(helper.authHeader)
+
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', helper.authHeader)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -109,6 +136,7 @@ describe('update of a note', () => {
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', helper.authHeader)
       .send(updatedBlog)
       .expect(200)
 
