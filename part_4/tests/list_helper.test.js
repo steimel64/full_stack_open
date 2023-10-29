@@ -6,7 +6,7 @@ const Blog = require('../models/blog')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-
+const ObjectId = require('mongodb').ObjectId
 
 
 beforeEach(async () => {
@@ -39,10 +39,8 @@ describe('general checks on blogs', () => {
       'author': 'Harry',
       'url': 'www.harry.com',
       'likes': 0,
-      'userId': '653e6f4774198d14ca396f07'
+      'userId': new ObjectId('653e84c59aa09b45955f6625')
     }
-
-    console.log(newBlog)
 
     await api
       .post('/api/blogs')
