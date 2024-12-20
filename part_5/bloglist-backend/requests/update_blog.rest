@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/652ba5cb816e408bf64b01df
+Content-Type: application/json
+
+{ 
+      "title": "Bills Blog-reboot", 
+      "author": "Mariya Takeuchi-reboot",
+      "url": "www.google.com reboot",
+      "likes": 3
+}
